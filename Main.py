@@ -9,7 +9,7 @@ Width, Height = 330, 717
 Window = pygame.display.set_mode((Width, Height))
 pygame.display.set_caption("demo")
 
-button1 = Button.Button("Text", 100, 400, 200, 100)
+button1 = Button.Button("Sign In", 100, 400, 160, 60,)
 
 def main() -> None:
     clock = pygame.time.Clock()
