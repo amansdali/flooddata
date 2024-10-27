@@ -4,7 +4,7 @@ class InputBox:
     def __init__(self, text, x, y, width, height):
         self.text = text
         self.rect = pygame.Rect(x, y, width, height)
-        self.textrect = pygame.Rect(x+5, y+5, width-10, height-5)
+        self.textrect = pygame.Rect(x+5, y+5, width, height)
         self.isselected = False
 
     def draw(self, screen, text):
