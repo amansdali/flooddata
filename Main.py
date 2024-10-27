@@ -26,9 +26,9 @@ button6 = Button.Button("Enter", 100, 500, 160, 60, )
 FONT = pygame.font.SysFont("arial", 30)
 FONT2 = pygame.font.SysFont("arial", 15)
 txt1 = FONT.render("Flood Feedback", True, "white")
-txt2 = FONT2.render('Enter Flood Duration', True, "black")
-txt3 = FONT2.render('Enter Flood Height', True, "black")
-txt4 = FONT2.render('Enter Latitue, Longitude', True, "black")
+txt2 = FONT2.render('Enter Flood Duration (Minutes)', True, "black")
+txt3 = FONT2.render('Enter Flood Height (cm)', True, "black")
+txt4 = FONT2.render('Enter Estimated Damage ($)', True, "black")
 txt5 = FONT2.render('Password Incorrect', True, "red")
 txt6 = FONT2.render('Username Not Found', True, "red")
 txt7 = FONT2.render('Username Taken', True, "red")
@@ -40,25 +40,22 @@ txt10 = FONT2.render('Enter Password:', True, "black")
 userdata = {}
 with open('Userdata') as file:
     for line in file:
-        userdata[line.split()[0]] = line.split()[1][0:-1]
-
-#ip = geocoder.ip("me")
-#latlng = str(ip.latlng)
-#latlng = '[51.779701, -108.413872]'
-#latlngtxt = FONT2.render('Latitue, Longitude: ' + latlng, True, "black")
-
+        userdata[line.split()[0]] = line.split()[1]
 
 
 def main() -> None:
     # variable setup
     run = True
     screen = 0
-    latlng = ''
-    latlngin = InputBox.InputBox(latlng, 40, 160, 280, 25)
+    ip = geocoder.ip("me")
+    latlng = str(ip.latlng)
+    latlngtxt = FONT2.render('Latitue, Longitude: ' + latlng, True, "black")
     duration = ''
     durationin = InputBox.InputBox(duration, 40, 220, 280, 25)
     height = ''
     heightin = InputBox.InputBox(height, 40, 280, 280, 25)
+    dmg = ''
+    dmgin = InputBox.InputBox(dmg, 40, 340, 280, 25)
     username = ''
     usernamein = InputBox.InputBox(username, 40, 160, 280, 25)
     password = ''
@@ -172,6 +169,7 @@ def main() -> None:
                                 f = open("Userdata", "a")
                                 f.write(username + ' ' + password + '\n')
                                 f.close()
+                                userdata[username]=password
                             else:
                                 Window.blit(txt8, (40, 400))
                                 pygame.display.flip()
@@ -244,35 +242,32 @@ def main() -> None:
                         f.write("User: " + username + '\n')
                         f.write("Latitute, longitude: " + latlng + '\n')
                         f.write("Date: " + todaydate + '\n')
-                        f.write("Duration: " + duration + '\n')
-                        f.write("Height: " + height + '\n')
+                        f.write("Duration (Minutes): " + duration + '\n')
+                        f.write("Height (cm): " + height + '\n')
+                        f.write("Damages ($): " + dmg + '\n')
                         f.write('\n')
                         f.close()
                         latlng = ''
                         duration = ''
                         height = ''
-                        latlngin.isselected = False
+                        dmg = ''
                         durationin.isselected = False
                         heightin.isselected = False
-                    elif latlngin.is_clicked(event):
-                        latlngin.isselected = True
-                        durationin.isselected = False
-                        heightin.isselected = False
+                        dmgin.isselected = False
                     elif durationin.is_clicked(event):
-                        latlngin.isselected = False
                         durationin.isselected = True
                         heightin.isselected = False
+                        dmgin.isselected = False
                     elif heightin.is_clicked(event):
-                        latlngin.isselected = False
                         durationin.isselected = False
                         heightin.isselected = True
+                        dmgin.isselected = False
+                    elif dmgin.is_clicked(event):
+                        durationin.isselected = False
+                        heightin.isselected = False
+                        dmgin.isselected = True
                 elif event.type == pygame.KEYDOWN:
-                    if latlngin.isselected:
-                        if event.key == pygame.K_BACKSPACE:
-                            latlng = latlng[0:-1]
-                        else:
-                            latlng += event.unicode
-                    elif durationin.isselected:
+                    if durationin.isselected:
                         if event.key == pygame.K_BACKSPACE:
                             duration = duration[0:-1]
                         else:
@@ -282,15 +277,21 @@ def main() -> None:
                             height = height[0:-1]
                         else:
                             height += event.unicode
+                    elif dmgin.isselected:
+                        if event.key == pygame.K_BACKSPACE:
+                            dmg = dmg[0:-1]
+                        else:
+                            dmg += event.unicode
 
                 Window.blit(usernametxt, (40, 70))
                 Window.blit(todaydatetxt, (40, 100))
-                Window.blit(txt4, (40, 140))
+                Window.blit(latlngtxt, (40, 140))
                 Window.blit(txt2, (40, 200))
                 Window.blit(txt3, (40, 260))
-                latlngin.draw(Window, latlng)
+                Window.blit(txt4, (40, 320))
                 durationin.draw(Window, duration)
                 heightin.draw(Window, height)
+                dmgin.draw(Window, dmg)
 
             elif screen == DATABASE:
                 Window.fill('WHITE')
