@@ -1,6 +1,4 @@
-import sys
 import pygame
-import time
 
 class RoundButton:
     def __init__(self, img1, img2, x, y, width, height):
