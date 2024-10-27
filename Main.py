@@ -19,6 +19,7 @@ button2 = Button.Button("Sign Up", 100, 400, 160, 60, )
 button3 = RoundButton.RoundButton('roundButton1.png', 'roundButton2.png', 50, 150, 275, 277)
 button4 = Button.Button("Database", 100, 480, 160, 60, )
 button5 = Button.Button("Submit", 100, 600, 160, 60, )
+button6 = Button.Button("Enter", 100, 500, 160, 60, )
 
 FONT = pygame.font.SysFont("arial", 30)
 FONT2 = pygame.font.SysFont("arial", 15)
@@ -26,6 +27,13 @@ txt1 = FONT.render("Flood Feedback", True, "white")
 txt2 = FONT2.render('Enter Flood Duration', True, "black")
 txt3 = FONT2.render('Enter Flood Height', True, "black")
 txt4 = FONT2.render('Enter Latitue, Longitude', True, "black")
+txt5 = FONT2.render('Password Incorrect', True, "red")
+txt6 = FONT2.render('Username Not Found', True, "red")
+
+userdata = {}
+with open('Userdata') as file:
+    for line in file:
+        userdata[line.split()[0]] = line.split()[1]
 
 #ip = geocoder.ip("me")
 #latlng = str(ip.latlng)
@@ -44,6 +52,9 @@ def main() -> None:
     height = ''
     heightin = InputBox.InputBox(height, 40, 280, 280, 25)
     username = ''
+    usernamein = InputBox.InputBox(username, 40, 100, 280, 25)
+    password = ''
+    passwordin = InputBox.InputBox(password, 40, 200, 280, 25)
     usernametxt = FONT2.render('Username: ' + username, True, "black")
     while run:
         for event in pygame.event.get():
@@ -69,28 +80,55 @@ def main() -> None:
                         screen = 2
 
             elif screen == 1:
-                Window.fill('WHITE')
-                username = 'Amanda'
-                usernametxt = FONT2.render('Username: ' + username, True, "black")
+                Window.fill((255, 213, 128))
+                usernamein.draw(Window, username)
+                passwordin.draw(Window, password)
                 if button0.is_hovered(mouse_pos):
                     button0.draw(Window, True)
                 else:
                     button0.draw(Window, False)
+                if button6.is_hovered(mouse_pos):
+                    button6.draw(Window, (230,230,230))
+                else:
+                    button6.draw(Window, 'WHITE')
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if button0.is_clicked(event):
                         screen = 0
-                screen = 3
+                    elif button6.is_clicked(event):
+                        if username in userdata:
+                            if password == userdata[username]:
+                                screen = 3
+                                usernametxt = FONT2.render('Username: ' + username, True, "black")
+                            else:
+                                Window.blit(txt5, (40, 400))
+                                pygame.display.flip()
+                                pygame.time.wait(1000)
+                        else:
+                            Window.blit(txt6, (40, 400))
+                            pygame.display.flip()
+                            pygame.time.wait(1000)
+
+                    elif usernamein.is_clicked(event):
+                        usernamein.isselected = True
+                        passwordin.isselected = False
+                    elif passwordin.is_clicked(event):
+                        usernamein.isselected = False
+                        passwordin.isselected = True
+                elif event.type == pygame.KEYDOWN:
+                    if usernamein.isselected:
+                        if event.key == pygame.K_BACKSPACE:
+                            username = username[0:-1]
+                        else:
+                            username += event.unicode
+                    elif passwordin.isselected:
+                        if event.key == pygame.K_BACKSPACE:
+                            password = password[0:-1]
+                        else:
+                            password += event.unicode
 
             elif screen == 2:
                 Window.fill('WHITE')
-                if button0.is_hovered(mouse_pos):
-                    button0.draw(Window, True)
-                else:
-                    button0.draw(Window, False)
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if button0.is_clicked(event):
-                        screen = 0
-                screen = 3
+
 
             elif screen == 3:
                 Window.fill('WHITE')
