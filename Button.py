@@ -1,6 +1,4 @@
-import sys
 import pygame
-import time
 
 class Button:
     def __init__(self, text, x, y, width, height):
